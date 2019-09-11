@@ -70,3 +70,61 @@ exports.createArticle = (req, res, next) => {
       next(err);
     });
 };
+
+exports.updateArticle = (req, res, next) => {
+  const articleId = req.params.articleId;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed, entered data is incorrect.");
+    error.statusCode = 422;
+    throw error;
+  }
+  const { title, content } = req.body;
+
+  Article.findById(articleId)
+    .then(article => {
+      if (!article) {
+        const error = new Error("Could not found article.");
+        error.statusCode = 404;
+        throw error;
+      }
+      article.title = title;
+      article.content = content;
+      return article.save();
+    })
+    .then(result => {
+      res
+        .status(200)
+        .json({ message: "Article updated successfully!", article: result });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const articleId = req.params.articleId;
+  Article.findById(articleId)
+    .then(article => {
+      if (!article) {
+        const error = new Error("Could not find the article.");
+        error.statusCode = 404;
+        throw error;
+      }
+      // Check logged in user
+      return Article.findOneAndRemove(articleId);
+    })
+    .then(result => {
+      console.log(result);
+      res.status(200).json({ message: "Article deleted." });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};

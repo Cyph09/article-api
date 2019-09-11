@@ -25,6 +25,20 @@ router.post(
 );
 
 // Edit an article
+router.put(
+  "/update-article/:articleId",
+  [
+    body("title")
+      .trim()
+      .isLength({ min: 5 }),
+    body("content")
+      .trim()
+      .isLength({ min: 5 })
+  ],
+  articleController.updateArticle
+);
+
 // Delete an article
+router.delete("/delete-article/:articleId", articleController.deleteArticle);
 
 module.exports = router;
