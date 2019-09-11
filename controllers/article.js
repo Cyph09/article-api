@@ -2,12 +2,24 @@ const { validationResult } = require("express-validator");
 
 const Article = require("../models/article");
 
-exports.getArticles = (req, res) => {
+exports.getArticles = (req, res, next) => {
+  const currentPage = req.query.page || 1;
+  const perPage = 2;
+  let totalItems;
   Article.find()
+    .countDocuments()
+    .then(count => {
+      totalItems = count;
+      return Article.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
     .then(articles => {
-      res
-        .status(200)
-        .json({ message: "Fetched articles successfully", articles });
+      res.status(200).json({
+        message: "Fetched articles successfully",
+        articles,
+        totalItems
+      });
     })
     .catch(err => {
       if (!err.statusCode) {
