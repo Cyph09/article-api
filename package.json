@@ -1,0 +1,29 @@
+{
+  "name": "article-api",
+  "version": "1.0.0",
+  "description": "Article API",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cyph09/article-api.git"
+  },
+  "author": "Swaleh Mhina",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cyph09/article-api/issues"
+  },
+  "homepage": "https://github.com/Cyph09/article-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-validator": "^6.2.0",
+    "mongoose": "^5.6.12"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}
