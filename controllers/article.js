@@ -3,14 +3,37 @@ const { validationResult } = require("express-validator");
 const Article = require("../models/article");
 
 exports.getArticles = (req, res) => {
-  Article.find({}, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(404).json({ message: "No article found" });
-    }
-    console.log(result);
-    res.status(200).json(result);
-  }).catch(err => console.log(err));
+  Article.find()
+    .then(articles => {
+      res
+        .status(200)
+        .json({ message: "Fetched articles successfully", articles });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.getArticle = (req, res, next) => {
+  const articleId = req.params.articleId;
+  Article.findById(articleId)
+    .then(article => {
+      if (!article) {
+        const error = new Error("Article not found.");
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).json({ message: "Article fetched", article });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
 };
 
 exports.createArticle = (req, res, next) => {

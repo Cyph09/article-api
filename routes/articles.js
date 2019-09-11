@@ -8,6 +8,7 @@ const articleController = require("../controllers/article");
 router.get("/", articleController.getArticles);
 
 // Get single article
+router.get("/:articleId", articleController.getArticle);
 
 // Publish an article
 router.post(
