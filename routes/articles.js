@@ -3,12 +3,13 @@ const router = express.Router();
 const { body } = require("express-validator");
 
 const articleController = require("../controllers/article");
+const isAuth = require("../middleware/is-auth");
 
 // Get all articles
 router.get("/", articleController.getArticles);
 
 // Get single article
-router.get("/:articleId", articleController.getArticle);
+router.get("/:articleId", isAuth, articleController.getArticle);
 
 // Publish an article
 router.post(

@@ -42,7 +42,7 @@ exports.signin = (req, res, next) => {
     .then(userDoc => {
       if (!userDoc) {
         const error = new Error(
-          "A user with specified email could not be found."
+          "Please make sure you enter correct email and password."
         );
         error.statusCode = 401;
         throw error;
