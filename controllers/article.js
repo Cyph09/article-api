@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 
 const Article = require("../models/article");
 
-exports.getArticles = (req, res, next) => {
+exports.getArticles = (req, res, nextn) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
   let totalItems;

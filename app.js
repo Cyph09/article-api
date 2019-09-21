@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const config = require("./config");
-const articles = require("./routes/articles");
+const articleRoutes = require("./routes/articles");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -13,14 +14,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use("/articles", articles);
+app.use("/articles", articleRoutes);
+app.use("/auth", authRoutes);
 
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).json({ message });
+  const data = error.data;
+  res.status(status).json({ message, data });
 });
 // Server
 app.listen(config.PORT, () => {
