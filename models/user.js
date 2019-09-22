@@ -18,7 +18,7 @@ const userSchema = new Schema({
     type: String,
     default: "I am new!"
   },
-  article: [
+  articles: [
     {
       type: Schema.Types.ObjectId,
       ref: "Article"

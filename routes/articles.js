@@ -6,7 +6,7 @@ const articleController = require("../controllers/article");
 const isAuth = require("../middleware/is-auth");
 
 // Get all articles
-router.get("/", articleController.getArticles);
+router.get("/", isAuth, articleController.getArticles);
 
 // Get single article
 router.get("/:articleId", isAuth, articleController.getArticle);
@@ -14,6 +14,7 @@ router.get("/:articleId", isAuth, articleController.getArticle);
 // Publish an article
 router.post(
   "/publish-article",
+  isAuth,
   [
     body("title")
       .trim()
@@ -28,6 +29,7 @@ router.post(
 // Edit an article
 router.put(
   "/update-article/:articleId",
+  isAuth,
   [
     body("title")
       .trim()
@@ -40,6 +42,10 @@ router.put(
 );
 
 // Delete an article
-router.delete("/delete-article/:articleId", articleController.deleteArticle);
+router.delete(
+  "/delete-article/:articleId",
+  isAuth,
+  articleController.deleteArticle
+);
 
 module.exports = router;

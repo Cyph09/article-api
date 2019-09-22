@@ -12,7 +12,8 @@ const articleSchema = new Schema(
       required: true
     },
     author: {
-      type: Object,
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true
     }
   },

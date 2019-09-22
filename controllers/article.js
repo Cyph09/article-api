@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 
 const Article = require("../models/article");
+const User = require("../models/user");
 
 exports.getArticles = (req, res, nextn) => {
   const currentPage = req.query.page || 1;
@@ -60,19 +61,28 @@ exports.createArticle = (req, res, next) => {
     // });
   }
   const { title, content } = req.body;
+  const userId = req.userId;
   const article = new Article({
     title,
     content,
-    author: { name: "Swaleh" }
+    author: userId
   });
 
   article
     .save()
     .then(result => {
-      console.log(result);
+      return User.findById({ userId });
+    })
+    .then(user => {
+      author = user;
+      user.articles.push(article);
+      return user.save();
+    })
+    .then(result => {
       res.status(201).json({
         message: "Article created successfully!",
-        article: result
+        article,
+        author: { _id: author._id, name: author.name }
       });
     })
     .catch(err => {
