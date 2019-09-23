@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const Article = require("../models/article");
 const User = require("../models/user");
 
-exports.getArticles = (req, res, nextn) => {
+exports.getArticles = (req, res, next) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
   let totalItems;
@@ -16,6 +16,11 @@ exports.getArticles = (req, res, nextn) => {
         .limit(perPage);
     })
     .then(articles => {
+      if (articles.length <= 0) {
+        const error = new Error("No article found.");
+        error.statusCode = 404;
+        throw error;
+      }
       res.status(200).json({
         message: "Fetched articles successfully",
         articles,
@@ -62,6 +67,7 @@ exports.createArticle = (req, res, next) => {
   }
   const { title, content } = req.body;
   const userId = req.userId;
+  let author;
   const article = new Article({
     title,
     content,
@@ -71,7 +77,7 @@ exports.createArticle = (req, res, next) => {
   article
     .save()
     .then(result => {
-      return User.findById({ userId });
+      return User.findById(userId);
     })
     .then(user => {
       author = user;
