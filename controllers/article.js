@@ -108,12 +108,20 @@ exports.updateArticle = (req, res, next) => {
     throw error;
   }
   const { title, content } = req.body;
+  const signedInUser = req.userId;
+  let articleAuthorId;
 
   Article.findById(articleId)
     .then(article => {
       if (!article) {
-        const error = new Error("Could not found article.");
+        const error = new Error("Could not find article.");
         error.statusCode = 404;
+        throw error;
+      }
+      articleAuthorId = article.author.toString();
+      if (articleAuthorId !== signedInUser) {
+        const error = new Error("Not authorized");
+        error.statusCode = 403;
         throw error;
       }
       article.title = title;
@@ -135,6 +143,8 @@ exports.updateArticle = (req, res, next) => {
 
 exports.deleteArticle = (req, res, next) => {
   const articleId = req.params.articleId;
+  const signedInUser = req.userId;
+  let articleAuthorId;
   Article.findById(articleId)
     .then(article => {
       if (!article) {
@@ -143,7 +153,18 @@ exports.deleteArticle = (req, res, next) => {
         throw error;
       }
       // Check logged in user
+      articleAuthorId = article.author.toString();
+      if (articleAuthorId !== signedInUser) {
+        const error = new Error("Not authorized.");
+        error.statusCode = 403;
+        throw error;
+      }
       return Article.findOneAndRemove(articleId);
+    })
+    .then(result => User.findById(signedInUser))
+    .then(user => {
+      user.articles.pull(articleId);
+      return user.save();
     })
     .then(result => {
       console.log(result);
